@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   {% block extra_css %}{% endblock %}
 </head>
-<body class="light-theme">
+<body class="light-theme {% block body_class %}{% endblock %}">
   {% block content %}{% endblock %}
 
   <!-- Bootstrap JS Bundle -->

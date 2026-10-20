@@ -45,15 +45,7 @@ Featuring a clean light-theme UI, interactive project galleries, contact system,
    ```
 
 3. **Open in browser**:
-   Navigate to [http://localhost:5000](http://localhost:5000) (or the port displayed in terminal).
-
----
-
-## 🔐 Admin Access
-
-- **Secret Login**: Click on the `"Hello,"` text on the Home page (or navigate directly to `/login`).
-- **Default Username**: `admin`
-- **Default Password**: `admin`
+   Navigate to [http://localhost:5000](http://localhost:5000) (or the port displayed in terminal)
 
 ---
 

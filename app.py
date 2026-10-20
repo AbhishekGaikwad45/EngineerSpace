@@ -430,18 +430,51 @@ def add_certification():
     year = request.form.get('year', '').strip()
     credentialUrl = request.form.get('credentialUrl', '').strip()
 
-    if name and issuer:
+    image_url = ''
+    if 'certImage' in request.files:
+        f = request.files['certImage']
+        if f and f.filename and allowed_file(f.filename):
+            ext = f.filename.rsplit('.', 1)[1].lower()
+            fname = f"cert_{uuid.uuid4().hex[:8]}.{ext}"
+            f.save(os.path.join(UPLOAD_FOLDER, fname))
+            image_url = f"/static/uploads/{fname}"
+
+    if name:
         cert_list.append({
             'id': f"cert-{uuid.uuid4().hex[:8]}",
             'name': name,
             'issuer': issuer,
             'year': year,
-            'credentialUrl': credentialUrl
+            'credentialUrl': credentialUrl,
+            'imageUrl': image_url
         })
         save_data(data)
-        flash('Certification added!', 'success')
+        flash('Certification added successfully!', 'success')
 
-    return redirect(url_for('admin_dashboard') + '#education-tab')
+    return redirect(url_for('admin_dashboard') + '#certifications-tab')
+
+@app.route('/admin/certification/edit/<cert_id>', methods=['POST'])
+@login_required
+def edit_certification(cert_id):
+    data = load_data()
+    cert = next((c for c in data.get('certifications', []) if c.get('id') == cert_id), None)
+    if cert:
+        cert['name'] = request.form.get('name', cert.get('name', '')).strip()
+        cert['issuer'] = request.form.get('issuer', cert.get('issuer', '')).strip()
+        cert['year'] = request.form.get('year', cert.get('year', '')).strip()
+        cert['credentialUrl'] = request.form.get('credentialUrl', cert.get('credentialUrl', '')).strip()
+
+        if 'certImage' in request.files:
+            f = request.files['certImage']
+            if f and f.filename and allowed_file(f.filename):
+                ext = f.filename.rsplit('.', 1)[1].lower()
+                fname = f"cert_{uuid.uuid4().hex[:8]}.{ext}"
+                f.save(os.path.join(UPLOAD_FOLDER, fname))
+                cert['imageUrl'] = f"/static/uploads/{fname}"
+
+        save_data(data)
+        flash('Certification updated successfully!', 'success')
+    return redirect(url_for('admin_dashboard') + '#certifications-tab')
 
 @app.route('/admin/certification/delete/<cert_id>', methods=['POST'])
 @login_required
@@ -450,7 +483,7 @@ def delete_certification(cert_id):
     data['certifications'] = [c for c in data.get('certifications', []) if c.get('id') != cert_id]
     save_data(data)
     flash('Certification deleted.', 'info')
-    return redirect(url_for('admin_dashboard') + '#education-tab')
+    return redirect(url_for('admin_dashboard') + '#certifications-tab')
 
 @app.route('/admin/project/add', methods=['POST'])
 @login_required

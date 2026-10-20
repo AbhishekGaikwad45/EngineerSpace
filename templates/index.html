@@ -55,6 +55,9 @@
           <button class="btn btn-nav" data-target="tab-projects">
             <i class="bi bi-grid-fill me-2"></i> Projects
           </button>
+          <button class="btn btn-nav" data-target="tab-certifications">
+            <i class="bi bi-award-fill me-2"></i> Certifications
+          </button>
           <button class="btn btn-nav" data-target="tab-contact">
             <i class="bi bi-envelope-fill me-2"></i> Contact Me
           </button>
@@ -338,7 +341,94 @@
         </div>
       </section>
 
-      <!-- TAB 4: CONTACT -->
+      <!-- TAB 4: CERTIFICATIONS -->
+      <section id="tab-certifications" class="portfolio-tab">
+        <div class="certifications-container">
+          <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+              <h1 class="section-title mb-1">Certifications</h1>
+              <p class="text-muted mb-0">Verified credentials, courses and specialized training</p>
+            </div>
+            {% if certifications %}
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold">
+                <i class="bi bi-patch-check-fill me-1"></i> {{ certifications|length }} Certified
+              </span>
+            {% endif %}
+          </div>
+
+          {% if certifications %}
+            <div class="row g-4">
+              {% for cert in certifications %}
+                <div class="col-12 col-md-6">
+                  <div class="card cert-card h-100 border-0 rounded-4 shadow-sm overflow-hidden">
+                    <div class="cert-image-container position-relative bg-light">
+                      {% if cert.imageUrl %}
+                        <img
+                          src="{{ cert.imageUrl }}"
+                          alt="{{ cert.name }}"
+                          class="cert-img w-100"
+                          loading="lazy"
+                          onclick="showCertModal('{{ cert.imageUrl }}', '{{ cert.name|escape }}')"
+                          style="cursor: pointer;"
+                        >
+                        <div class="cert-overlay">
+                          <button
+                            type="button"
+                            class="btn btn-light btn-sm rounded-pill shadow-sm"
+                            onclick="showCertModal('{{ cert.imageUrl }}', '{{ cert.name|escape }}')"
+                          >
+                            <i class="bi bi-arrows-fullscreen me-1"></i> View Full
+                          </button>
+                        </div>
+                      {% else %}
+                        <div class="cert-placeholder d-flex flex-column align-items-center justify-content-center py-5">
+                          <i class="bi bi-award text-primary display-4 mb-2"></i>
+                          <span class="text-muted small">Certificate Document</span>
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                      <div class="d-flex justify-content-between align-items-start mb-2 gap-2">
+                        <h4 class="cert-title fw-bold mb-0 text-dark">{{ cert.name }}</h4>
+                        {% if cert.year %}
+                          <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill small">{{ cert.year }}</span>
+                        {% endif %}
+                      </div>
+                      <p class="cert-issuer text-muted mb-3">
+                        <i class="bi bi-building me-1 text-primary"></i> {{ cert.issuer }}
+                      </p>
+                      <div class="mt-auto pt-2 d-flex gap-2 flex-wrap">
+                        {% if cert.imageUrl %}
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                            onclick="showCertModal('{{ cert.imageUrl }}', '{{ cert.name|escape }}')"
+                          >
+                            <i class="bi bi-eye me-1"></i> Preview Image
+                          </button>
+                        {% endif %}
+                        {% if cert.credentialUrl %}
+                          <a href="{{ cert.credentialUrl }}" target="_blank" rel="noreferrer" class="btn btn-sm btn-primary rounded-pill px-3">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> Verify Credential
+                          </a>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="card border-0 p-5 text-center rounded-4 bg-white shadow-sm">
+              <i class="bi bi-award text-muted display-4 mb-3"></i>
+              <h5 class="fw-bold">No Certifications Added Yet</h5>
+              <p class="text-muted mb-0">Add your certifications and images from the Admin Dashboard.</p>
+            </div>
+          {% endif %}
+        </div>
+      </section>
+
+      <!-- TAB 5: CONTACT -->
       <section id="tab-contact" class="portfolio-tab">
         <div class="contact-wrapper">
           <div class="contact-card p-4 p-md-5 rounded-4 shadow-sm mx-auto">
@@ -378,8 +468,35 @@
     </main>
   </div>
 </div>
+<!-- Certificate Preview Modal -->
+<div class="modal fade" id="certPreviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-bottom py-3 px-4">
+        <h5 class="modal-title fw-bold" id="certPreviewModalTitle">Certificate Preview</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0 text-center bg-dark">
+        <img id="certPreviewModalImg" src="" alt="Certificate" class="img-fluid" style="max-height: 80vh; object-fit: contain;">
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  function showCertModal(src, title) {
+    var modalImg = document.getElementById('certPreviewModalImg');
+    var modalTitle = document.getElementById('certPreviewModalTitle');
+    if (modalImg) modalImg.src = src;
+    if (modalTitle) modalTitle.textContent = title || 'Certificate Preview';
+    var modalEl = document.getElementById('certPreviewModal');
+    if (modalEl && typeof bootstrap !== 'undefined') {
+      var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+      modal.show();
+    }
+  }
+</script>
 {% endblock %}

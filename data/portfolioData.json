@@ -89,14 +89,16 @@
       "name": "Full Stack Web Development",
       "issuer": "MERN Stack Certification",
       "year": "2025",
-      "credentialUrl": ""
+      "credentialUrl": "",
+      "imageUrl": "/static/images/web develpment.jpeg"
     },
     {
       "id": "cert-1792495573832",
       "name": "Full stack Java Development",
       "issuer": "Java Full Stack Certification",
       "year": "2025",
-      "credentialUrl": ""
+      "credentialUrl": "",
+      "imageUrl": "/static/images/java.jpeg"
     }
   ],
   "projects": [
